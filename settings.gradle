@@ -1,0 +1,13 @@
+include ':advanced-utils'
+project(':advanced-utils').projectDir = new File(settingsDir, 'advanced-utils')
+
+include ':advanced-model'
+project(':advanced-model').projectDir = new File(settingsDir, 'advanced-model')
+
+include ':advanced-fragment'
+project(':advanced-fragment').projectDir = new File(settingsDir, 'advanced-fragment')
+
+include ':multitool-model'
+project(':multitool-model').projectDir = new File(settingsDir, 'multitool-model')
+
+include ':multitool-app'
