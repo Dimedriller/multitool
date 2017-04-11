@@ -8,17 +8,19 @@ import android.view.ViewGroup;
 import com.dimedriller.advancedmodel.Model;
 
 public abstract class Presenter<V extends ViewInterface, M> {
-    private static final String STATE_NAME_PARAMS = "Params";
-
     protected final V mViewInterface;
     protected final M mModel;
 
     private final @NonNull PresenterContainer mContainer;
     private final @NonNull Bundle mParams;
+    private final @NonNull String mTag;
+
+    private @NonNull PresenterState mState = PresenterState.INIT;
 
     public Presenter(@NonNull Class<V> viewInterfaceClass,
             @NonNull PresenterContainer container,
-            @NonNull Bundle params) {
+            @NonNull Bundle params,
+            @NonNull String tag) {
         mViewInterface = ViewInterface.createViewInterface(viewInterfaceClass);
 
         PresenterActivity activity = container.getActivity();
@@ -28,30 +30,16 @@ public abstract class Presenter<V extends ViewInterface, M> {
 
         mContainer = container;
         mParams = params;
+        mTag = tag;
     }
 
     @CallSuper
     public void finish() {
-        // No action
+        mState = PresenterState.DESTROYED;
     }
 
-    public @NonNull String getTag() {
-        return getClass().getName();
-    }
-
-    @CallSuper
-    public void onSaveState(@NonNull Bundle state) {
-        state.putBundle(STATE_NAME_PARAMS, mParams);
-    }
-
-    @CallSuper
-    public void onResume() {
-        // No action
-    }
-
-    @CallSuper
-    public void onPause() {
-        // No action
+    public final @NonNull String getTag() {
+        return mTag;
     }
 
     protected void onViewCreated() {
@@ -63,4 +51,50 @@ public abstract class Presenter<V extends ViewInterface, M> {
         mViewInterface.createView(anchorView);
         onViewCreated();
     }
+
+    protected void onViewDestroyed() {
+        // No action
+    }
+
+    final void destroyView(ViewAnchor anchor) {
+        ViewGroup anchorView = mContainer.getAnchorView(anchor);
+        mViewInterface.destroyView(anchorView);
+
+        onViewDestroyed();
+    }
+
+    boolean hasView() {
+        return mViewInterface.hasView();
+    }
+
+    @NonNull PresenterState getState() {
+        return mState;
+    }
+
+    @CallSuper
+    public void onResume() {
+        // No action
+    }
+
+    void resume() {
+        mState = PresenterState.RESUMED;
+        onResume();
+    }
+
+    @CallSuper
+    public void onPause() {
+        // No action
+    }
+
+    void pause() {
+        mState = PresenterState.PAUSED;
+        onPause();
+    }
+
+    @CallSuper
+    public void onSaveState(@NonNull Bundle state) {
+        // TODO: Add persisting logic
+    }
+
+
 }
