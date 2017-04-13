@@ -20,6 +20,22 @@ public class PresenterManager {
         mPresenterContainer = presenterContainer;
     }
 
+    public PushTransaction newPushTransaction(@Nullable String stackName) {
+        return new PushTransaction(this, stackName);
+    }
+
+    public PushTransaction newPushTransaction() {
+        return newPushTransaction(null);
+    }
+
+    public PopTransaction newPopTransaction(String stackName) {
+        return new PopTransaction(this, stackName);
+    }
+
+    public PopTransaction newPopTransaction() {
+        return newPopTransaction(null);
+    }
+
     void attachPresenter(@NonNull String tag, @NonNull ViewAnchor anchor, @NonNull PresenterBuilder presenterBuilder) {
         PresenterRecord presenterRecord = mPresenterMap.get(tag);
         if (presenterRecord != null) {

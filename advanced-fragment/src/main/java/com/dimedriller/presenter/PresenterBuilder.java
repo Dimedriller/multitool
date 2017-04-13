@@ -1,6 +1,5 @@
 package com.dimedriller.presenter;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 
@@ -16,7 +15,7 @@ public class PresenterBuilder<P extends Presenter> {
     }
 
     public @NonNull String getTag() {
-        return mPresenterClass.getClass().getName();
+        return mPresenterClass.getName();
     }
 
     final P build(PresenterContainer container) {
