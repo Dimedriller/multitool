@@ -30,6 +30,7 @@ public class PresenterManager {
         Presenter presenter = presenterBuilder.build(mPresenterContainer);
         presenterRecord = new PresenterRecord(presenter, anchor);
         mPresenterMap.put(tag, presenterRecord);
+        presenter.onCreate();
     }
 
     void detachPresenter(@NonNull String tag) {
@@ -39,9 +40,9 @@ public class PresenterManager {
             return;
         }
 
-        mPresenterMap.remove(tag);
         Presenter presenter = presenterRecord.mPresenter;
-        presenter.finish();
+        presenter.onDestroy();
+        mPresenterMap.remove(tag);
     }
 
     void showPresenter(@NonNull String tag) {

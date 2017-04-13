@@ -33,13 +33,28 @@ public abstract class Presenter<V extends ViewInterface, M> {
         mTag = tag;
     }
 
-    @CallSuper
-    public void finish() {
-        mState = PresenterState.DESTROYED;
+    final @NonNull String getTag() {
+        return mTag;
     }
 
-    public final @NonNull String getTag() {
-        return mTag;
+    @CallSuper
+    protected void onCreate() {
+        // No action
+    }
+
+    void create() {
+        onCreate();
+        mState = PresenterState.CREATED;
+    }
+
+    @CallSuper
+    protected void onDestroy() {
+        // No action
+    }
+
+    void destroy() {
+        onDestroy();
+        mState = PresenterState.DESTROYED;
     }
 
     protected void onViewCreated() {
@@ -72,7 +87,7 @@ public abstract class Presenter<V extends ViewInterface, M> {
     }
 
     @CallSuper
-    public void onResume() {
+    protected void onResume() {
         // No action
     }
 
@@ -82,7 +97,7 @@ public abstract class Presenter<V extends ViewInterface, M> {
     }
 
     @CallSuper
-    public void onPause() {
+    protected void onPause() {
         // No action
     }
 
