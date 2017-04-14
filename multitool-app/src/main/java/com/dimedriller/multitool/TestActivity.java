@@ -19,9 +19,11 @@ public class TestActivity extends PresenterActivity<TestViewInterface> {
         super.onCreate(savedInstanceState);
 
         new Handler().postDelayed(() -> {
-                getPresenterManager().newPushTransaction()
-                        .addPresenter(new ViewIDAnchor(R.id.container), new PresenterBuilder<>(PurchasesPresenter.class))
-                        .commit();},
+                    ViewIDAnchor anchor = new ViewIDAnchor(R.id.container);
+                    getPresenterManager().newPushTransaction()
+                            .addPresenter(anchor, new PresenterBuilder<>(PurchasesPresenter.class))
+                            .addPresenter(anchor, new PresenterBuilder<>(TestPresenter.class))
+                            .commit();},
                 500);
     }
 }
