@@ -14,7 +14,7 @@ public class PresenterManager {
     private final @NonNull PresenterContainer mPresenterContainer;
 
     private final Map<String, PresenterRecord> mPresenterMap = new HashMap<>();
-    private final Map<String, List<Transaction>> mTransactionStackMap = new HashMap<>();
+    private final Map<String, List<TransactionCompositeStep>> mTransactionStackMap = new HashMap<>();
 
     public PresenterManager(@NonNull PresenterContainer presenterContainer) {
         mPresenterContainer = presenterContainer;
@@ -127,8 +127,8 @@ public class PresenterManager {
         presenter.pause();
     }
 
-    void pushTransaction(String stackName, Transaction transaction) {
-        List<Transaction> transactionStack = mTransactionStackMap.get(stackName);
+    void pushTransaction(String stackName, TransactionCompositeStep transaction) {
+        List<TransactionCompositeStep> transactionStack = mTransactionStackMap.get(stackName);
         if (transactionStack == null) {
             transactionStack = new ArrayList<>();
             mTransactionStackMap.put(stackName, transactionStack);

@@ -1,15 +1,9 @@
 package com.dimedriller.presenter;
 
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-
-import java.util.ArrayList;
-import java.util.List;
-
-class Transaction {
+class TransactionCompositeStep extends TransactionStep {
     private final TransactionStep[] mSteps;
 
-    Transaction(TransactionStep[] steps) {
+    TransactionCompositeStep(TransactionStep[] steps) {
         mSteps = steps;
     }
 

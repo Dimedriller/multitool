@@ -40,7 +40,7 @@ public class PushTransaction {
         }
 
         TransactionStep[] steps = mStepList.toArray(new TransactionStep[stepCount]);
-        Transaction transaction = new Transaction(steps);
+        TransactionCompositeStep transaction = new TransactionCompositeStep(steps);
         mManager.pushTransaction(mStackName, transaction);
         transaction.actDirect(mManager);
     }
