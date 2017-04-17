@@ -21,14 +21,15 @@ public class PushTransaction {
 
     public PushTransaction addPresenter(@NonNull ViewAnchor anchor, @NonNull PresenterBuilder presenterBuilder) {
         String tag = presenterBuilder.getTag();
-        TransactionAddStep step = new TransactionAddStep(anchor, presenterBuilder, tag);
-        mStepList.add(step);
+        mStepList.add(new TransactionAttachStep(tag, anchor, presenterBuilder));
+        mStepList.add(new TransactionShowStep(tag));
+        mStepList.add(new TransactionResumeStep(tag));
         return this;
     }
 
     public PushTransaction removePresenter(@NonNull String tag) {
-        TransactionRemoveStep step = new TransactionRemoveStep(tag);
-        mStepList.add(step);
+        mStepList.add(new TransactionPauseStep(tag));
+        mStepList.add(new TransactionHideStep(tag));
         return this;
     }
 

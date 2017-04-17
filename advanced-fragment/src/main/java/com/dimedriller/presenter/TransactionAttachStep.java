@@ -2,14 +2,14 @@ package com.dimedriller.presenter;
 
 import android.support.annotation.NonNull;
 
-class TransactionAddStep extends TransactionStep {
+class TransactionAttachStep extends TransactionStep {
     private final @NonNull ViewAnchor mAnchor;
     private final @NonNull PresenterBuilder mPresenterBuilder;
     private final @NonNull String mTag;
 
-    public TransactionAddStep(@NonNull ViewAnchor anchor,
-            @NonNull PresenterBuilder presenterBuilder,
-            @NonNull String tag) {
+    TransactionAttachStep(@NonNull String tag,
+            @NonNull ViewAnchor anchor,
+            @NonNull PresenterBuilder presenterBuilder) {
         mAnchor = anchor;
         mPresenterBuilder = presenterBuilder;
         mTag = tag;
@@ -18,14 +18,10 @@ class TransactionAddStep extends TransactionStep {
     @Override
     void actDirect(PresenterManager manager) {
         manager.attachPresenter(mTag, mAnchor, mPresenterBuilder);
-        manager.showPresenter(mTag);
-        manager.resumePresenter(mTag);
     }
 
     @Override
     void actReverse(PresenterManager manager) {
-        manager.pausePresenter(mTag);
-        manager.hidePresenter(mTag);
         manager.detachPresenter(mTag);
     }
 }
