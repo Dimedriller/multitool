@@ -3,21 +3,24 @@ package com.dimedriller.presenter;
 import android.support.annotation.NonNull;
 
 class TransactionAttachStep extends TransactionStep {
-    private final @NonNull ViewAnchor mAnchor;
+    private final @NonNull ViewLocator mAnchor;
+    private final @NonNull ViewPlacer mPlacer;
     private final @NonNull PresenterBuilder mPresenterBuilder;
     private final @NonNull String mTag;
 
-    TransactionAttachStep(@NonNull String tag,
-            @NonNull ViewAnchor anchor,
+    public TransactionAttachStep(@NonNull String tag,
+            @NonNull ViewLocator anchor,
+            @NonNull ViewPlacer placer,
             @NonNull PresenterBuilder presenterBuilder) {
         mAnchor = anchor;
+        mPlacer = placer;
         mPresenterBuilder = presenterBuilder;
         mTag = tag;
     }
 
     @Override
     void actDirect(PresenterManager manager) {
-        manager.attachPresenter(mTag, mAnchor, mPresenterBuilder);
+        manager.attachPresenter(mTag, mAnchor, mPlacer, mPresenterBuilder);
     }
 
     @Override

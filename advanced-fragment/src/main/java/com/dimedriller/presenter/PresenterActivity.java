@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
-import android.view.View;
 import android.view.ViewGroup;
 
 public abstract class PresenterActivity<VI extends ContainerViewInterface>
@@ -39,7 +38,7 @@ public abstract class PresenterActivity<VI extends ContainerViewInterface>
     }
 
     @Override
-    public @NonNull ViewGroup getAnchorView(@NonNull ViewAnchor anchor) {
+    public @NonNull ViewGroup getAnchorView(@NonNull ViewLocator anchor) {
         return anchor.findAnchorView(mViewInterface.getContainerView());
     }
 

@@ -36,7 +36,10 @@ public class PresenterManager {
         return newPopTransaction(null);
     }
 
-    void attachPresenter(@NonNull String tag, @NonNull ViewAnchor anchor, @NonNull PresenterBuilder presenterBuilder) {
+    void attachPresenter(@NonNull String tag,
+            @NonNull ViewLocator anchor,
+            @NonNull ViewPlacer placer,
+            @NonNull PresenterBuilder presenterBuilder) {
         PresenterRecord presenterRecord = mPresenterMap.get(tag);
         if (presenterRecord != null) {
             Log.w("Presenter \"" + tag + "\" already exists.");
@@ -44,7 +47,7 @@ public class PresenterManager {
         }
 
         Presenter presenter = presenterBuilder.build(mPresenterContainer);
-        presenterRecord = new PresenterRecord(presenter, anchor);
+        presenterRecord = new PresenterRecord(presenter, anchor, placer);
         mPresenterMap.put(tag, presenterRecord);
         presenter.onCreate();
     }
@@ -74,8 +77,9 @@ public class PresenterManager {
             return;
         }
 
-        ViewAnchor anchor = presenterRecord.mAnchor;
-        presenter.createView(anchor);
+        ViewLocator locator = presenterRecord.mLocator;
+        ViewPlacer placer = presenterRecord.mPlacer;
+        presenter.createView(locator, placer);
     }
 
     void hidePresenter(@NonNull String tag) {
@@ -91,8 +95,9 @@ public class PresenterManager {
             return;
         }
 
-        ViewAnchor anchor = presenterRecord.mAnchor;
-        presenter.destroyView(anchor);
+        ViewLocator anchor = presenterRecord.mLocator;
+        ViewPlacer placer = presenterRecord.mPlacer;
+        presenter.destroyView(anchor, placer);
     }
 
     void resumePresenter(@NonNull String tag) {

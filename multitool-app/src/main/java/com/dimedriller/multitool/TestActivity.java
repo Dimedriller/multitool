@@ -7,7 +7,7 @@ import android.support.annotation.Nullable;
 import com.dimedriller.multitool.purchases.PurchasesPresenter;
 import com.dimedriller.presenter.PresenterActivity;
 import com.dimedriller.presenter.PresenterBuilder;
-import com.dimedriller.presenter.ViewIDAnchor;
+import com.dimedriller.presenter.ViewIDLocator;
 
 public class TestActivity extends PresenterActivity<TestViewInterface> {
     public TestActivity() {
@@ -19,7 +19,7 @@ public class TestActivity extends PresenterActivity<TestViewInterface> {
         super.onCreate(savedInstanceState);
 
         new Handler().postDelayed(() -> {
-                    ViewIDAnchor anchor = new ViewIDAnchor(R.id.container);
+                    ViewIDLocator anchor = new ViewIDLocator(R.id.container);
                     getPresenterManager().newPushTransaction()
                             .addPresenter(anchor, new PresenterBuilder<>(PurchasesPresenter.class))
                             .addPresenter(anchor, new PresenterBuilder<>(TestPresenter.class))

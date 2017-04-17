@@ -4,10 +4,10 @@ import android.support.annotation.IdRes;
 import android.support.annotation.NonNull;
 import android.view.ViewGroup;
 
-public class ViewIDAnchor implements ViewAnchor {
+public class ViewIDLocator implements ViewLocator {
     private final @IdRes int mID;
 
-    public ViewIDAnchor(@IdRes int id) {
+    public ViewIDLocator(@IdRes int id) {
         mID = id;
     }
 

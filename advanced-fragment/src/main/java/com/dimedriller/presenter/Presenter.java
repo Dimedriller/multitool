@@ -61,9 +61,9 @@ public abstract class Presenter<V extends ViewInterface, M> {
         // No action
     }
 
-    final void createView(ViewAnchor anchor) {
-        ViewGroup anchorView = mContainer.getAnchorView(anchor);
-        mViewInterface.createView(anchorView);
+    final void createView(ViewLocator locator, ViewPlacer placer) {
+        ViewGroup anchorView = mContainer.getAnchorView(locator);
+        mViewInterface.createView(anchorView, placer);
         onViewCreated();
     }
 
@@ -71,9 +71,9 @@ public abstract class Presenter<V extends ViewInterface, M> {
         // No action
     }
 
-    final void destroyView(ViewAnchor anchor) {
+    final void destroyView(ViewLocator anchor, ViewPlacer placer) {
         ViewGroup anchorView = mContainer.getAnchorView(anchor);
-        mViewInterface.destroyView(anchorView);
+        mViewInterface.destroyView(anchorView, placer);
 
         onViewDestroyed();
     }

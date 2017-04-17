@@ -2,10 +2,12 @@ package com.dimedriller.presenter;
 
 class PresenterRecord {
     final Presenter mPresenter;
-    final ViewAnchor mAnchor;
+    final ViewLocator mLocator;
+    final ViewPlacer mPlacer;
 
-    PresenterRecord(Presenter presenter, ViewAnchor anchor) {
+    PresenterRecord(Presenter presenter, ViewLocator locator, ViewPlacer placer) {
         mPresenter = presenter;
-        mAnchor = anchor;
+        mLocator = locator;
+        mPlacer = placer;
     }
 }
