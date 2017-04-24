@@ -27,7 +27,13 @@ public class PushTransaction {
         return this;
     }
 
-    public PushTransaction removePresenter(@NonNull String tag) {
+    public PushTransaction showPresenter(@NonNull String tag) {
+        mStepList.add(new TransactionShowStep(tag));
+        mStepList.add(new TransactionResumeStep(tag));
+        return this;
+    }
+
+    public PushTransaction hidePresenter(@NonNull String tag) {
         mStepList.add(new TransactionPauseStep(tag));
         mStepList.add(new TransactionHideStep(tag));
         return this;
@@ -40,8 +46,7 @@ public class PushTransaction {
             return;
         }
 
-        TransactionStep[] steps = mStepList.toArray(new TransactionStep[stepCount]);
-        TransactionCompositeStep transaction = new TransactionCompositeStep(steps);
+        TransactionStepGroup transaction = new TransactionStepGroup(mStepList);
         mManager.pushTransaction(mStackName, transaction);
         transaction.actDirect(mManager);
     }

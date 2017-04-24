@@ -14,7 +14,7 @@ public class PresenterManager {
     private final @NonNull PresenterContainer mPresenterContainer;
 
     private final Map<String, PresenterRecord> mPresenterMap = new HashMap<>();
-    private final Map<String, List<TransactionCompositeStep>> mTransactionStackMap = new HashMap<>();
+    private final Map<String, List<TransactionStepGroup>> mTransactionStackMap = new HashMap<>();
 
     public PresenterManager(@NonNull PresenterContainer presenterContainer) {
         mPresenterContainer = presenterContainer;
@@ -132,8 +132,8 @@ public class PresenterManager {
         presenter.pause();
     }
 
-    void pushTransaction(String stackName, TransactionCompositeStep transaction) {
-        List<TransactionCompositeStep> transactionStack = mTransactionStackMap.get(stackName);
+    void pushTransaction(String stackName, TransactionStepGroup transaction) {
+        List<TransactionStepGroup> transactionStack = mTransactionStackMap.get(stackName);
         if (transactionStack == null) {
             transactionStack = new ArrayList<>();
             mTransactionStackMap.put(stackName, transactionStack);
@@ -142,7 +142,56 @@ public class PresenterManager {
         transactionStack.add(0, transaction);
     }
 
-    void popTransaction(@Nullable String stackName) {
+    void popTransaction(@Nullable String stackName, int transactionCount) {
+        List<TransactionStepGroup> transactionStack = mTransactionStackMap.get(stackName);
+        if (transactionStack == null) {
+            Log.w("Pop with null \"" + stackName + "\" stack was ignored.");
+            return;
+        }
 
+        int stackTransactionCount = transactionStack.size();
+
+        if (transactionCount <= 0 || transactionCount > stackTransactionCount)
+            transactionCount = stackTransactionCount;
+
+        if (transactionCount == 0) {
+            Log.w("Pop with empty \"" + stackName + "\" stack was ignored.");
+            return;
+        }
+
+        TransactionStepGroup mergedGroup = transactionStack.remove(0);
+        for(int indexTransaction = 1; indexTransaction < transactionCount; indexTransaction++) {
+            TransactionStepGroup popGroup = transactionStack.remove(0);
+            mergedGroup = mergedGroup.merge(popGroup);
+        }
+
+        mergedGroup.actReverse(this);
+    }
+
+    void popTransaction(@Nullable String stackName, String toTagName) {
+        List<TransactionStepGroup> transactionStack = mTransactionStackMap.get(stackName);
+        if (transactionStack == null) {
+            Log.w("Pop with null \"" + stackName + "\" stack was ignored.");
+            return;
+        }
+
+        int stackTransactionCount = transactionStack.size();
+        if (stackTransactionCount == 0) {
+            Log.w("Pop with empty \"" + stackName + "\" stack was ignored.");
+            return;
+        }
+
+        TransactionStepGroup popGroup = transactionStack.remove(0);
+        TransactionStepGroup mergedPopGroup = new TransactionStepGroup(new ArrayList<TransactionStep>());
+        for(int indexTransaction = 1;
+                indexTransaction < stackTransactionCount && !popGroup.containsAttachStep(toTagName);
+                indexTransaction++) {
+            mergedPopGroup = mergedPopGroup.merge(popGroup);
+            popGroup = transactionStack.remove(0);
+        }
+        if (!popGroup.containsAttachStep(toTagName))
+            mergedPopGroup.merge(popGroup);
+
+        mergedPopGroup.actReverse(this);
     }
 }

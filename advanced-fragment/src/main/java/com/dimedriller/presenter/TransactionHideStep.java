@@ -3,7 +3,7 @@ package com.dimedriller.presenter;
 import android.support.annotation.NonNull;
 
 class TransactionHideStep extends TransactionStep {
-    private final @NonNull String mTag;
+    final @NonNull String mTag;
 
     TransactionHideStep(@NonNull String tag) {
         mTag = tag;
@@ -17,5 +17,14 @@ class TransactionHideStep extends TransactionStep {
     @Override
     void actReverse(PresenterManager manager) {
         manager.resumePresenter(mTag);
+    }
+
+    @Override
+    boolean isOpposite(TransactionStep other) {
+        if (!(other instanceof TransactionShowStep))
+            return false;
+
+        TransactionShowStep showStep = (TransactionShowStep) other;
+        return mTag.equals(showStep.mTag);
     }
 }

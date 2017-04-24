@@ -27,4 +27,13 @@ class TransactionAttachStep extends TransactionStep {
     void actReverse(PresenterManager manager) {
         manager.detachPresenter(mTag);
     }
+
+    @Override
+    boolean isOpposite(TransactionStep other) {
+        return false;
+    }
+
+    public @NonNull String getTag() {
+        return mTag;
+    }
 }
