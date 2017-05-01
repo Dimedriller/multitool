@@ -1,15 +1,20 @@
 package com.dimedriller.presenter;
 
+import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.util.SparseArray;
 import android.view.View;
 import android.view.ViewGroup;
+
+import com.dimedriller.log.Log;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 
 public abstract class ViewInterface {
     private @Nullable View mRootView;
+    private @Nullable SparseArray<Parcelable> mViewState;
 
     protected abstract @NonNull View onCreateView(@NonNull ViewGroup parentView);
 
@@ -35,6 +40,29 @@ public abstract class ViewInterface {
         onDestroyView(parentView);
         placer.detachView(parentView, mRootView);
         mRootView = null;
+    }
+
+    final void saveViewState() {
+        if (mRootView == null) {
+            Log.w("Attempt to store view state with no view");
+            return;
+        }
+
+        SparseArray<Parcelable> viewState = new SparseArray<>();
+        mRootView.saveHierarchyState(viewState);
+        mViewState = viewState;
+    }
+
+    final void restoreViewState() {
+        if (mRootView == null) {
+            Log.w("Attempt to restore view state with no view");
+            return;
+        }
+
+        if (mViewState == null)
+            return;
+        mRootView.restoreHierarchyState(mViewState);
+        mViewState = null;
     }
 
     protected @Nullable View getRootView() {

@@ -11,7 +11,7 @@ class TransactionHideStep extends TransactionStep {
 
     @Override
     void actDirect(PresenterManager manager) {
-        manager.hidePresenter(mTag);
+        manager.hidePresenter(mTag, true);
     }
 
     @Override

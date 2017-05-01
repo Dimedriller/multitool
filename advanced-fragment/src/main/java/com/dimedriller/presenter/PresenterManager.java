@@ -82,7 +82,7 @@ public class PresenterManager {
         presenter.createView(locator, placer);
     }
 
-    void hidePresenter(@NonNull String tag) {
+    void hidePresenter(@NonNull String tag, boolean isViewStateSaved) {
         PresenterRecord presenterRecord = mPresenterMap.get(tag);
         if (presenterRecord == null) {
             Log.w("Presenter \"" + tag + "\" does not exist.");
@@ -97,7 +97,7 @@ public class PresenterManager {
 
         ViewLocator anchor = presenterRecord.mLocator;
         ViewPlacer placer = presenterRecord.mPlacer;
-        presenter.destroyView(anchor, placer);
+        presenter.destroyView(anchor, placer, isViewStateSaved);
     }
 
     void resumePresenter(@NonNull String tag) {

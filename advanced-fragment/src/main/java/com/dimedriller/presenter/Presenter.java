@@ -63,15 +63,22 @@ public abstract class Presenter<V extends ViewInterface, M> {
 
     final void createView(ViewLocator locator, ViewPlacer placer) {
         ViewGroup anchorView = mContainer.getAnchorView(locator);
+        anchorView.setSaveEnabled(false);
+
         mViewInterface.createView(anchorView, placer);
         onViewCreated();
+
+        mViewInterface.saveViewState();
     }
 
     protected void onViewDestroyed() {
         // No action
     }
 
-    final void destroyView(ViewLocator anchor, ViewPlacer placer) {
+    final void destroyView(ViewLocator anchor, ViewPlacer placer, boolean isViewStateSaved) {
+        if (isViewStateSaved)
+            mViewInterface.saveViewState();
+
         ViewGroup anchorView = mContainer.getAnchorView(anchor);
         mViewInterface.destroyView(anchorView, placer);
 
