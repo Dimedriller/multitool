@@ -16,7 +16,7 @@ class TransactionPauseStep extends TransactionStep {
 
     @Override
     void actReverse(PresenterManager manager) {
-        manager.showPresenter(mTag);
+        manager.resumePresenter(mTag);
     }
 
     @Override

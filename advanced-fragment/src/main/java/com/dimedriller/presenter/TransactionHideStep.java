@@ -16,7 +16,7 @@ class TransactionHideStep extends TransactionStep {
 
     @Override
     void actReverse(PresenterManager manager) {
-        manager.resumePresenter(mTag);
+        manager.showPresenter(mTag);
     }
 
     @Override

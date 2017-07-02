@@ -13,7 +13,7 @@ import java.util.Map;
 public class PresenterManager {
     private final @NonNull PresenterContainer mPresenterContainer;
 
-    private final Map<String, PresenterRecord> mPresenterMap = new HashMap<>();
+    private final Map<String, Presenter> mPresenterMap = new HashMap<>();
     private final Map<String, List<TransactionStepGroup>> mTransactionStackMap = new HashMap<>();
 
     public PresenterManager(@NonNull PresenterContainer presenterContainer) {
@@ -37,77 +37,70 @@ public class PresenterManager {
     }
 
     void attachPresenter(@NonNull String tag,
-            @NonNull ViewLocator anchor,
-            @NonNull ViewPlacer placer,
-            @NonNull PresenterBuilder presenterBuilder) {
-        PresenterRecord presenterRecord = mPresenterMap.get(tag);
-        if (presenterRecord != null) {
+            @NonNull PresenterBuilder presenterBuilder,
+            @NonNull ViewLocator locator,
+            @NonNull ViewPlacer placer) {
+        Presenter presenter = mPresenterMap.get(tag);
+        if (presenter != null) {
             Log.w("Presenter \"" + tag + "\" already exists.");
             return;
         }
 
-        Presenter presenter = presenterBuilder.build(mPresenterContainer);
-        presenterRecord = new PresenterRecord(presenter, anchor, placer);
-        mPresenterMap.put(tag, presenterRecord);
-        presenter.onCreate();
+        presenter = presenterBuilder.build(mPresenterContainer);
+        presenter.setLocator(locator);
+        presenter.setPlacer(placer);
+        mPresenterMap.put(tag, presenter);
+        presenter.create();
     }
 
     void detachPresenter(@NonNull String tag) {
-        PresenterRecord presenterRecord = mPresenterMap.get(tag);
-        if (presenterRecord == null) {
+        Presenter presenter = mPresenterMap.get(tag);
+        if (presenter == null) {
             Log.w("Presenter \"" + tag + "\" does not exist.");
             return;
         }
 
-        Presenter presenter = presenterRecord.mPresenter;
-        presenter.onDestroy();
+        presenter.destroy();
         mPresenterMap.remove(tag);
     }
 
     void showPresenter(@NonNull String tag) {
-        PresenterRecord presenterRecord = mPresenterMap.get(tag);
-        if (presenterRecord == null) {
+        Presenter presenter = mPresenterMap.get(tag);
+        if (presenter == null) {
             Log.w("Presenter \"" + tag + "\" does not exist.");
             return;
         }
 
-        Presenter presenter = presenterRecord.mPresenter;
         if (presenter.hasView()) {
             Log.w("Presenter \"" + tag + "\" was already shown");
             return;
         }
 
-        ViewLocator locator = presenterRecord.mLocator;
-        ViewPlacer placer = presenterRecord.mPlacer;
-        presenter.createView(locator, placer);
+        presenter.createView();
     }
 
     void hidePresenter(@NonNull String tag, boolean isViewStateSaved) {
-        PresenterRecord presenterRecord = mPresenterMap.get(tag);
-        if (presenterRecord == null) {
+        Presenter presenter = mPresenterMap.get(tag);
+        if (presenter == null) {
             Log.w("Presenter \"" + tag + "\" does not exist.");
             return;
         }
 
-        Presenter presenter = presenterRecord.mPresenter;
         if (!presenter.hasView()) {
             Log.w("Presenter \"" + tag + "\" was already hidden");
             return;
         }
 
-        ViewLocator anchor = presenterRecord.mLocator;
-        ViewPlacer placer = presenterRecord.mPlacer;
-        presenter.destroyView(anchor, placer, isViewStateSaved);
+        presenter.destroyView(isViewStateSaved);
     }
 
     void resumePresenter(@NonNull String tag) {
-        PresenterRecord presenterRecord = mPresenterMap.get(tag);
-        if (presenterRecord == null) {
+        Presenter presenter = mPresenterMap.get(tag);
+        if (presenter == null) {
             Log.w("Presenter \"" + tag + "\" does not exist.");
             return;
         }
 
-        Presenter presenter = presenterRecord.mPresenter;
         if (presenter.getState() == PresenterState.RESUMED) {
             Log.w("Presenter \"" + tag + "\" was already resumed.");
             return;
@@ -117,13 +110,12 @@ public class PresenterManager {
     }
 
     void pausePresenter(@NonNull String tag) {
-        PresenterRecord presenterRecord = mPresenterMap.get(tag);
-        if (presenterRecord == null) {
+        Presenter presenter = mPresenterMap.get(tag);
+        if (presenter == null) {
             Log.w("Presenter \"" + tag + "\" does not exist.");
             return;
         }
 
-        Presenter presenter = presenterRecord.mPresenter;
         if (presenter.getState() == PresenterState.PAUSED) {
             Log.w("Presenter \"" + tag + "\" was already paused.");
             return;

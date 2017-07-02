@@ -5,7 +5,7 @@ import android.support.annotation.NonNull;
 class TransactionShowStep extends TransactionStep {
     final @NonNull String mTag;
 
-    public TransactionShowStep(@NonNull String tag) {
+    TransactionShowStep(@NonNull String tag) {
         mTag = tag;
     }
 

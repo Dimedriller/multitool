@@ -21,13 +21,13 @@ public abstract class PresenterActivity<VI extends ContainerViewInterface>
         super.onCreate(savedInstanceState);
 
         ViewGroup rootView = (ViewGroup) findViewById(android.R.id.content);
-        mViewInterface.createView(rootView);
+        mViewInterface.createView(rootView, new ViewSimplePlacer());
     }
 
     @Override
     protected void onDestroy() {
         ViewGroup rootView = (ViewGroup) findViewById(android.R.id.content);
-        mViewInterface.destroyView(rootView);
+        mViewInterface.destroyView(rootView, new ViewSimplePlacer());
 
         super.onDestroy();
     }

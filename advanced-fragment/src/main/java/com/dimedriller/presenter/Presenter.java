@@ -17,6 +17,9 @@ public abstract class Presenter<V extends ViewInterface, M> {
 
     private @NonNull PresenterState mState = PresenterState.INIT;
 
+    private @NonNull ViewLocator mLocator = new ViewIDLocator(android.R.id.content);
+    private @NonNull ViewPlacer mPlacer = new ViewSimplePlacer();
+
     public Presenter(@NonNull Class<V> viewInterfaceClass,
             @NonNull PresenterContainer container,
             @NonNull Bundle params,
@@ -31,6 +34,14 @@ public abstract class Presenter<V extends ViewInterface, M> {
         mContainer = container;
         mParams = params;
         mTag = tag;
+    }
+
+    final void setLocator(@NonNull ViewLocator locator) {
+        mLocator = locator;
+    }
+
+    final void setPlacer(@NonNull ViewPlacer placer) {
+        mPlacer = placer;
     }
 
     final @NonNull String getTag() {
@@ -61,26 +72,33 @@ public abstract class Presenter<V extends ViewInterface, M> {
         // No action
     }
 
-    final void createView(ViewLocator locator, ViewPlacer placer) {
+    final void createView(@NonNull ViewLocator locator, @NonNull ViewPlacer placer) {
+        mLocator = locator;
+        mPlacer = placer;
+
         ViewGroup anchorView = mContainer.getAnchorView(locator);
         anchorView.setSaveEnabled(false);
 
         mViewInterface.createView(anchorView, placer);
         onViewCreated();
 
-        mViewInterface.saveViewState();
+        mViewInterface.restoreViewState();
+    }
+
+    final void createView() {
+        createView(mLocator, mPlacer);
     }
 
     protected void onViewDestroyed() {
         // No action
     }
 
-    final void destroyView(ViewLocator anchor, ViewPlacer placer, boolean isViewStateSaved) {
+    final void destroyView(boolean isViewStateSaved) {
         if (isViewStateSaved)
             mViewInterface.saveViewState();
 
-        ViewGroup anchorView = mContainer.getAnchorView(anchor);
-        mViewInterface.destroyView(anchorView, placer);
+        ViewGroup anchorView = mContainer.getAnchorView(mLocator);
+        mViewInterface.destroyView(anchorView, mPlacer);
 
         onViewDestroyed();
     }
@@ -118,5 +136,12 @@ public abstract class Presenter<V extends ViewInterface, M> {
         // TODO: Add persisting logic
     }
 
+    Bundle saveState() {
+        Bundle savedState = new Bundle();
 
+        onSaveState(mParams);
+        savedState.putBundle("params", mParams);
+
+        return savedState;
+    }
 }
