@@ -11,6 +11,7 @@ public abstract class PresenterActivity<VI extends ContainerViewInterface>
         implements PresenterContainer {
     private final VI mViewInterface;
     private final PresenterManager mPresenterManager = new PresenterManager(this);
+    private final SimpleViewPlacer mViewPlacer = new SimpleViewPlacer();
 
     public PresenterActivity(Class<VI> viClass) {
         mViewInterface = ViewInterface.createViewInterface(viClass);
@@ -21,13 +22,13 @@ public abstract class PresenterActivity<VI extends ContainerViewInterface>
         super.onCreate(savedInstanceState);
 
         ViewGroup rootView = (ViewGroup) findViewById(android.R.id.content);
-        mViewInterface.createView(rootView, new ViewSimplePlacer());
+        mViewInterface.createView(rootView, mViewPlacer);
     }
 
     @Override
     protected void onDestroy() {
         ViewGroup rootView = (ViewGroup) findViewById(android.R.id.content);
-        mViewInterface.destroyView(rootView, new ViewSimplePlacer());
+        mViewInterface.destroyView(rootView, mViewPlacer);
 
         super.onDestroy();
     }
@@ -38,8 +39,8 @@ public abstract class PresenterActivity<VI extends ContainerViewInterface>
     }
 
     @Override
-    public @NonNull ViewGroup getAnchorView(@NonNull ViewLocator anchor) {
-        return anchor.findAnchorView(mViewInterface.getContainerView());
+    public @NonNull ViewGroup getContainerView() {
+        return mViewInterface.getContainerView();
     }
 
     @Override

@@ -17,8 +17,7 @@ public abstract class Presenter<V extends ViewInterface, M> {
 
     private @NonNull PresenterState mState = PresenterState.INIT;
 
-    private @NonNull ViewLocator mLocator = new ViewIDLocator(android.R.id.content);
-    private @NonNull ViewPlacer mPlacer = new ViewSimplePlacer();
+    private @NonNull ViewPlacer mViewPlacer = new SimpleViewPlacer();
 
     public Presenter(@NonNull Class<V> viewInterfaceClass,
             @NonNull PresenterContainer container,
@@ -36,12 +35,8 @@ public abstract class Presenter<V extends ViewInterface, M> {
         mTag = tag;
     }
 
-    final void setLocator(@NonNull ViewLocator locator) {
-        mLocator = locator;
-    }
-
-    final void setPlacer(@NonNull ViewPlacer placer) {
-        mPlacer = placer;
+    final void setViewPlacer(@NonNull ViewPlacer viewPlacer) {
+        mViewPlacer = viewPlacer;
     }
 
     final @NonNull String getTag() {
@@ -72,21 +67,18 @@ public abstract class Presenter<V extends ViewInterface, M> {
         // No action
     }
 
-    final void createView(@NonNull ViewLocator locator, @NonNull ViewPlacer placer) {
-        mLocator = locator;
-        mPlacer = placer;
+    final void createView(@NonNull ViewPlacer viewPlacer) {
+        mViewPlacer = viewPlacer;
 
-        ViewGroup anchorView = mContainer.getAnchorView(locator);
-        anchorView.setSaveEnabled(false);
-
-        mViewInterface.createView(anchorView, placer);
+        ViewGroup containerView = mContainer.getContainerView();
+        mViewInterface.createView(containerView, viewPlacer);
         onViewCreated();
 
         mViewInterface.restoreViewState();
     }
 
     final void createView() {
-        createView(mLocator, mPlacer);
+        createView(mViewPlacer);
     }
 
     protected void onViewDestroyed() {
@@ -97,8 +89,8 @@ public abstract class Presenter<V extends ViewInterface, M> {
         if (isViewStateSaved)
             mViewInterface.saveViewState();
 
-        ViewGroup anchorView = mContainer.getAnchorView(mLocator);
-        mViewInterface.destroyView(anchorView, mPlacer);
+        ViewGroup containerView = mContainer.getContainerView();
+        mViewInterface.destroyView(containerView, mViewPlacer);
 
         onViewDestroyed();
     }

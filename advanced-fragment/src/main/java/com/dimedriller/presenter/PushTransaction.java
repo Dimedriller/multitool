@@ -19,9 +19,9 @@ public class PushTransaction {
         mStackName = stackName;
     }
 
-    public PushTransaction addPresenter(@NonNull ViewLocator locator, @NonNull PresenterBuilder presenterBuilder) {
+    public PushTransaction addPresenter(@NonNull PresenterBuilder presenterBuilder) {
         String tag = presenterBuilder.getTag();
-        mStepList.add(new TransactionAttachStep(tag, presenterBuilder, locator, new ViewSimplePlacer()));
+        mStepList.add(new TransactionAttachStep(tag, presenterBuilder, new SimpleViewPlacer()));
         mStepList.add(new TransactionShowStep(tag));
         mStepList.add(new TransactionResumeStep(tag));
         return this;

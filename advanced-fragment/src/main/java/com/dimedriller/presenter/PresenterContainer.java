@@ -5,6 +5,6 @@ import android.view.ViewGroup;
 
 public interface PresenterContainer {
     @NonNull PresenterActivity getActivity();
-    @NonNull ViewGroup getAnchorView(@NonNull ViewLocator anchor);
+    @NonNull ViewGroup getContainerView();
     @NonNull PresenterManager getPresenterManager();
 }

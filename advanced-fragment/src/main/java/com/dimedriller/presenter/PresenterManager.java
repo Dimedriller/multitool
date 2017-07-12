@@ -36,10 +36,7 @@ public class PresenterManager {
         return newPopTransaction(null);
     }
 
-    void attachPresenter(@NonNull String tag,
-            @NonNull PresenterBuilder presenterBuilder,
-            @NonNull ViewLocator locator,
-            @NonNull ViewPlacer placer) {
+    void attachPresenter(@NonNull String tag, @NonNull PresenterBuilder presenterBuilder, @NonNull ViewPlacer placer) {
         Presenter presenter = mPresenterMap.get(tag);
         if (presenter != null) {
             Log.w("Presenter \"" + tag + "\" already exists.");
@@ -47,8 +44,7 @@ public class PresenterManager {
         }
 
         presenter = presenterBuilder.build(mPresenterContainer);
-        presenter.setLocator(locator);
-        presenter.setPlacer(placer);
+        presenter.setViewPlacer(placer);
         mPresenterMap.put(tag, presenter);
         presenter.create();
     }

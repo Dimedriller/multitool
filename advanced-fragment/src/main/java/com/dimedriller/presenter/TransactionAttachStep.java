@@ -5,22 +5,19 @@ import android.support.annotation.NonNull;
 class TransactionAttachStep extends TransactionStep {
     private final @NonNull String mTag;
     private final @NonNull PresenterBuilder mPresenterBuilder;
-    private final @NonNull ViewLocator mLocator;
     private final @NonNull ViewPlacer mPlacer;
 
     public TransactionAttachStep(@NonNull String tag,
             @NonNull PresenterBuilder presenterBuilder,
-            @NonNull ViewLocator locator,
             @NonNull ViewPlacer placer) {
         mTag = tag;
         mPresenterBuilder = presenterBuilder;
-        mLocator = locator;
         mPlacer = placer;
     }
 
     @Override
     void actDirect(PresenterManager manager) {
-        manager.attachPresenter(mTag, mPresenterBuilder, mLocator, mPlacer);
+        manager.attachPresenter(mTag, mPresenterBuilder, mPlacer);
     }
 
     @Override
