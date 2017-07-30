@@ -20,18 +20,20 @@ public class PresenterBuilder<P extends Presenter> {
 
     final P build(PresenterContainer container) {
         try {
-            Constructor<P> constructor = mPresenterClass.getConstructor(PresenterContainer.class,
-                    Bundle.class,
-                    String.class);
+            Constructor<P> constructor = mPresenterClass.getConstructor(PresenterContainer.class, Bundle.class);
+
+            Bundle params = new Bundle(mParams);
             String tag = getTag();
-            return constructor.newInstance(container, mParams, tag);
+            params.putString(Presenter.PARAM_TAG, tag);
+
+            return constructor.newInstance(container, params);
         } catch (NoSuchMethodException e) {
             throw new IllegalArgumentException(
-                    "Constructor " + mPresenterClass.getName() + "(PresenterContainer, Bundle, String) not found",
+                    "Constructor " + mPresenterClass.getName() + "(PresenterContainer, Bundle) not found",
                     e);
         } catch (IllegalAccessException e) {
             throw new IllegalArgumentException(
-                    "Constructor " + mPresenterClass.getName() + "(PresenterContainer, Bundle, String) not accessible",
+                    "Constructor " + mPresenterClass.getName() + "(PresenterContainer, Bundle) not accessible",
                     e);
         } catch (InstantiationException e) {
             throw new IllegalArgumentException("Class " + mPresenterClass.getName() + " instantiation not possible", e);

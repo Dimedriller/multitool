@@ -8,10 +8,8 @@ import com.dimedriller.presenter.Presenter;
 import com.dimedriller.presenter.PresenterContainer;
 
 public class PurchasesPresenter extends Presenter<PurchasesPresenterViewInterface, MultitoolModel> {
-    public PurchasesPresenter(@NonNull PresenterContainer container,
-            @NonNull Bundle params,
-            @NonNull String tag) {
-        super(PurchasesPresenterViewInterface.class, container, params, tag);
+    public PurchasesPresenter(@NonNull PresenterContainer container, @NonNull Bundle params) {
+        super(PurchasesPresenterViewInterface.class, container, params);
     }
 
     @Override

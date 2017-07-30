@@ -8,6 +8,8 @@ import android.view.ViewGroup;
 import com.dimedriller.advancedmodel.Model;
 
 public abstract class Presenter<V extends ViewInterface, M> {
+    static final String PARAM_TAG = Presenter.class.getName() + ".TAG";
+
     protected final V mViewInterface;
     protected final M mModel;
 
@@ -21,8 +23,7 @@ public abstract class Presenter<V extends ViewInterface, M> {
 
     public Presenter(@NonNull Class<V> viewInterfaceClass,
             @NonNull PresenterContainer container,
-            @NonNull Bundle params,
-            @NonNull String tag) {
+            @NonNull Bundle params) {
         mViewInterface = ViewInterface.createViewInterface(viewInterfaceClass);
 
         PresenterActivity activity = container.getActivity();
@@ -32,6 +33,10 @@ public abstract class Presenter<V extends ViewInterface, M> {
 
         mContainer = container;
         mParams = params;
+
+        String tag = params.getString(PARAM_TAG);
+        if (tag == null)
+            throw new IllegalArgumentException("Presenter tag cannot be null.");
         mTag = tag;
     }
 
@@ -48,7 +53,7 @@ public abstract class Presenter<V extends ViewInterface, M> {
         // No action
     }
 
-    void create() {
+    final void create() {
         onCreate();
         mState = PresenterState.CREATED;
     }
@@ -58,7 +63,7 @@ public abstract class Presenter<V extends ViewInterface, M> {
         // No action
     }
 
-    void destroy() {
+    final void destroy() {
         onDestroy();
         mState = PresenterState.DESTROYED;
     }
