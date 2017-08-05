@@ -23,31 +23,13 @@ public class PresenterManager {
 
     @NonNull
     PresenterManagerInstanceState saveInstanceState() {
-        HashMap<String, PresenterParcelableInstance> presenterInstanceMap = new HashMap<>();
-        Set<Map.Entry<String, Presenter>> presenterEntrySet = mPresenterMap.entrySet();
-        for(Map.Entry<String, Presenter> entry : presenterEntrySet) {
-            String key = entry.getKey();
-            Presenter presenter = entry.getValue();
-            PresenterParcelableInstance presenterParcelable = presenter.saveParcelable();
-            presenterInstanceMap.put(key, presenterParcelable);
-        }
-
         HashMap<String, List<TransactionStepGroup>> transactionStackMap = new HashMap<>(mTransactionStackMap);
-        return new PresenterManagerInstanceState(presenterInstanceMap, transactionStackMap);
+        return new PresenterManagerInstanceState(transactionStackMap);
     }
 
     void restoreInstanceState(@Nullable PresenterManagerInstanceState state) {
         if (state == null)
             return;
-
-        Map<String, PresenterParcelableInstance> presenterInstanceMap = state.getPresenterMap();
-        Set<Map.Entry<String, PresenterParcelableInstance>> presenterInstanceEntrySet = presenterInstanceMap.entrySet();
-        for(Map.Entry<String, PresenterParcelableInstance> entry : presenterInstanceEntrySet) {
-            String key = entry.getKey();
-            PresenterParcelableInstance presenterParcelable = entry.getValue();
-            Presenter presenter = presenterParcelable.restore(mPresenterContainer);
-            mPresenterMap.put(key, presenter);
-        }
 
         Map<String, List<TransactionStepGroup>> transactionStackMap = state.getTransactionStackMap();
         mTransactionStackMap.putAll(transactionStackMap);
