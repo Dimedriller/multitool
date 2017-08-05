@@ -21,7 +21,8 @@ public class PushTransaction {
 
     public PushTransaction addPresenter(@NonNull PresenterBuilder presenterBuilder) {
         String tag = presenterBuilder.getTag();
-        mStepList.add(new TransactionAttachStep(tag, presenterBuilder, new SimpleViewPlacer()));
+        mStepList.add(new TransactionAttachStep(tag, presenterBuilder));
+        mStepList.add(new TransactionStepSetViewPlacer(tag, new SimpleViewPlacer()));
         mStepList.add(new TransactionShowStep(tag));
         mStepList.add(new TransactionResumeStep(tag));
         return this;
