@@ -18,30 +18,32 @@ public class PresenterBuilder<P extends Presenter> {
         return mPresenterClass.getName();
     }
 
-    final P build(PresenterContainer container) {
+    static<P extends  Presenter> P build(PresenterContainer container, Class<P> presenterClass, Bundle params) {
         try {
-            Constructor<P> constructor = mPresenterClass.getConstructor(PresenterContainer.class, Bundle.class);
-
-            Bundle params = new Bundle(mParams);
-            String tag = getTag();
-            params.putString(Presenter.PARAM_TAG, tag);
-
+            Constructor<P> constructor = presenterClass.getConstructor(PresenterContainer.class, Bundle.class);
             return constructor.newInstance(container, params);
         } catch (NoSuchMethodException e) {
             throw new IllegalArgumentException(
-                    "Constructor " + mPresenterClass.getName() + "(PresenterContainer, Bundle) not found",
+                    "Constructor " + presenterClass.getName() + "(PresenterContainer, Bundle) not found",
                     e);
         } catch (IllegalAccessException e) {
             throw new IllegalArgumentException(
-                    "Constructor " + mPresenterClass.getName() + "(PresenterContainer, Bundle) not accessible",
+                    "Constructor " + presenterClass.getName() + "(PresenterContainer, Bundle) not accessible",
                     e);
         } catch (InstantiationException e) {
-            throw new IllegalArgumentException("Class " + mPresenterClass.getName() + " instantiation not possible", e);
+            throw new IllegalArgumentException("Class " + presenterClass.getName() + " instantiation not possible", e);
         } catch (InvocationTargetException e) {
             throw new IllegalArgumentException(
-                    "Constructor " + mPresenterClass.getName()
+                    "Constructor " + presenterClass.getName()
                             + "(PresenterContainer, Bundle, String) exception happened",
                     e);
         }
+    }
+
+    final P build(PresenterContainer container) {
+        String tag = getTag();
+        Bundle params = new Bundle(mParams);
+        params.putString(Presenter.PARAM_TAG, tag);
+        return build(container, mPresenterClass, params);
     }
 }

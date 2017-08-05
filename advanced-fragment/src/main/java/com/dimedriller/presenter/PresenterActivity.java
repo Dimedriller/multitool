@@ -9,6 +9,9 @@ import android.view.ViewGroup;
 public abstract class PresenterActivity<VI extends ContainerViewInterface>
         extends AppCompatActivity
         implements PresenterContainer {
+    private static final String PARAM_PRESENTER_MANAGER_INSTANCE_STATE = PresenterActivity.class.getName()
+            + ".PRESENTER_MANAGER_INSTANCE_STATE";
+
     private final VI mViewInterface;
     private final PresenterManager mPresenterManager = new PresenterManager(this);
     private final SimpleViewPlacer mViewPlacer = new SimpleViewPlacer();
@@ -23,6 +26,12 @@ public abstract class PresenterActivity<VI extends ContainerViewInterface>
 
         ViewGroup rootView = (ViewGroup) findViewById(android.R.id.content);
         mViewInterface.createView(rootView, mViewPlacer);
+
+        if (savedInstanceState != null) {
+            PresenterManagerInstanceState managerInstanceState = savedInstanceState.getParcelable(
+                    PARAM_PRESENTER_MANAGER_INSTANCE_STATE);
+            mPresenterManager.restoreInstanceState(managerInstanceState);
+        }
     }
 
     @Override
@@ -31,6 +40,14 @@ public abstract class PresenterActivity<VI extends ContainerViewInterface>
         mViewInterface.destroyView(rootView, mViewPlacer);
 
         super.onDestroy();
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        PresenterManagerInstanceState managerInstanceState = mPresenterManager.saveInstanceState();
+        outState.putParcelable(PARAM_PRESENTER_MANAGER_INSTANCE_STATE, managerInstanceState);
     }
 
     @Override

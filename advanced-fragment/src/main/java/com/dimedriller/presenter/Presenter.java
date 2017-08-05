@@ -1,8 +1,10 @@
 package com.dimedriller.presenter;
 
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.annotation.CallSuper;
 import android.support.annotation.NonNull;
+import android.util.SparseArray;
 import android.view.ViewGroup;
 
 import com.dimedriller.advancedmodel.Model;
@@ -133,12 +135,15 @@ public abstract class Presenter<V extends ViewInterface, M> {
         // TODO: Add persisting logic
     }
 
-    Bundle saveState() {
-        Bundle savedState = new Bundle();
+    final PresenterParcelableInstance saveParcelable() {
+        String className = getClass().getName();
 
-        onSaveState(mParams);
-        savedState.putBundle("params", mParams);
+        Bundle params = new Bundle(mParams);
+        onSaveState(params);
+        params.putString(PARAM_TAG, mTag);
 
-        return savedState;
+        SparseArray<Parcelable> viewState = mViewInterface.getViewState();
+
+        return new PresenterParcelableInstance(className, params, viewState);
     }
 }

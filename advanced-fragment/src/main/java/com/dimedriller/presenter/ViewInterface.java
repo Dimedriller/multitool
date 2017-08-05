@@ -65,6 +65,15 @@ public abstract class ViewInterface {
         mViewState = null;
     }
 
+    @Nullable
+    final SparseArray<Parcelable> getViewState() {
+        return mViewState;
+    }
+
+    final void setViewState(@Nullable SparseArray<Parcelable> viewState) {
+        mViewState = viewState;
+    }
+
     protected @Nullable View getRootView() {
         return mRootView;
     }

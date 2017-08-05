@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class PresenterManager {
     private final @NonNull PresenterContainer mPresenterContainer;
@@ -22,6 +23,53 @@ public class PresenterManager {
 
     public PushTransaction newPushTransaction(@Nullable String stackName) {
         return new PushTransaction(this, stackName);
+    }
+
+    @NonNull
+    PresenterManagerInstanceState saveInstanceState() {
+        HashMap<String, PresenterParcelableInstance> presenterInstanceMap = new HashMap<>();
+        Set<Map.Entry<String, Presenter>> presenterEntrySet = mPresenterMap.entrySet();
+        for(Map.Entry<String, Presenter> entry : presenterEntrySet) {
+            String key = entry.getKey();
+            Presenter presenter = entry.getValue();
+            PresenterParcelableInstance presenterParcelable = presenter.saveParcelable();
+            presenterInstanceMap.put(key, presenterParcelable);
+        }
+
+        HashMap<String, List<TransactionStepGroup>> transactionStackMap = new HashMap<>(mTransactionStackMap);
+        return new PresenterManagerInstanceState(presenterInstanceMap, transactionStackMap);
+    }
+
+    void restoreInstanceState(@Nullable PresenterManagerInstanceState state) {
+        if (state == null)
+            return;
+
+        Map<String, PresenterParcelableInstance> presenterInstanceMap = state.getPresenterMap();
+        Set<Map.Entry<String, PresenterParcelableInstance>> presenterInstanceEntrySet = presenterInstanceMap.entrySet();
+        for(Map.Entry<String, PresenterParcelableInstance> entry : presenterInstanceEntrySet) {
+            String key = entry.getKey();
+            PresenterParcelableInstance presenterParcelable = entry.getValue();
+            Presenter presenter = presenterParcelable.restore(mPresenterContainer);
+            mPresenterMap.put(key, presenter);
+        }
+
+        Map<String, List<TransactionStepGroup>> transactionStackMap = state.getTransactionStackMap();
+        mTransactionStackMap.putAll(transactionStackMap);
+
+        Set<Map.Entry<String, List<TransactionStepGroup>>> transactionEntrySet = transactionStackMap.entrySet();
+        for(Map.Entry<String, List<TransactionStepGroup>> entry : transactionEntrySet) {
+            List<TransactionStepGroup> transactionStack = entry.getValue();
+            int transactionStackSize = transactionStack.size();
+            if (transactionStackSize == 0)
+                continue;
+
+            TransactionStepGroup mergedGroup = transactionStack.get(transactionStackSize - 1);
+            for(int indexTransaction = transactionStackSize - 2; indexTransaction >= 0; indexTransaction--) {
+                TransactionStepGroup group = transactionStack.get(indexTransaction);
+                mergedGroup = mergedGroup.mergeForward(group);
+            }
+            mergedGroup.actDirect(this);
+        }
     }
 
     public PushTransaction newPushTransaction() {
@@ -150,7 +198,7 @@ public class PresenterManager {
         TransactionStepGroup mergedGroup = transactionStack.remove(0);
         for(int indexTransaction = 1; indexTransaction < transactionCount; indexTransaction++) {
             TransactionStepGroup popGroup = transactionStack.remove(0);
-            mergedGroup = mergedGroup.merge(popGroup);
+            mergedGroup = mergedGroup.mergeBack(popGroup);
         }
 
         mergedGroup.actReverse(this);
@@ -174,11 +222,11 @@ public class PresenterManager {
         for(int indexTransaction = 1;
                 indexTransaction < stackTransactionCount && !popGroup.containsAttachStep(toTagName);
                 indexTransaction++) {
-            mergedPopGroup = mergedPopGroup.merge(popGroup);
+            mergedPopGroup = mergedPopGroup.mergeBack(popGroup);
             popGroup = transactionStack.remove(0);
         }
         if (!popGroup.containsAttachStep(toTagName))
-            mergedPopGroup.merge(popGroup);
+            mergedPopGroup.mergeBack(popGroup);
 
         mergedPopGroup.actReverse(this);
     }

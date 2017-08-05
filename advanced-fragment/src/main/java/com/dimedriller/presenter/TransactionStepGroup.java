@@ -1,6 +1,7 @@
 package com.dimedriller.presenter;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 class TransactionStepGroup {
@@ -37,6 +38,23 @@ class TransactionStepGroup {
         return -1;
     }
 
+    TransactionStepGroup mergeForward(TransactionStepGroup otherGroup) {
+        List<TransactionStep> mergedStepList = Arrays.asList(mSteps);
+        List<TransactionStep> remainingStepList = new ArrayList<>();
+
+        for(TransactionStep step : otherGroup.mSteps) {
+            int indexOppositeStep = findOppositeStepIndex(mergedStepList, step);
+            if (indexOppositeStep == -1)
+                remainingStepList.add(step);
+            else
+                mergedStepList.remove(indexOppositeStep);
+        }
+
+        mergedStepList.addAll(remainingStepList);
+
+        return new TransactionStepGroup(mergedStepList);
+    }
+
     /**
      * Merges steps with another {@code TransactionStepGroup} and returns new {@code TransactionStepGroup}.
      *
@@ -44,34 +62,19 @@ class TransactionStepGroup {
      *
      * Note: Order of steps is significantly important so {@code for} with index loop is used
      */
-    TransactionStepGroup merge(TransactionStepGroup otherGroup) {
-        List<TransactionStep> stepList = new ArrayList<>();
+    TransactionStepGroup mergeBack(TransactionStepGroup otherGroup) {
+        List<TransactionStep> mergedStepList = Arrays.asList(otherGroup.mSteps);
+        List<TransactionStep> remainingStepList = new ArrayList<>();
 
-        TransactionStep[] otherSteps = otherGroup.mSteps;
-        int countOtherStep = otherSteps.length;
-        List<TransactionStep> mergedStepList = new ArrayList<>(countOtherStep);
-        //noinspection ManualArrayToCollectionCopy,ForLoopReplaceableByForEach
-        for(int indexStep = 0; indexStep < countOtherStep; indexStep++) {
-            TransactionStep otherStep = otherSteps[indexStep];
-            mergedStepList.add(otherStep);
-        }
-
-        int countStep = mSteps.length;
-        //noinspection ForLoopReplaceableByForEach
-        for(int indexStep = 0; indexStep < countStep; indexStep++) {
-            TransactionStep step = mSteps[indexStep];
+        for (TransactionStep step : mSteps) {
             int indexOppositeStep = findOppositeStepIndex(mergedStepList, step);
             if (indexOppositeStep == -1)
-                stepList.add(step);
+                remainingStepList.add(step);
             else
                 mergedStepList.remove(indexOppositeStep);
         }
 
-        countStep = stepList.size();
-        for(int indexStep = 0; indexStep < countStep; indexStep++) {
-            TransactionStep step = stepList.get(indexStep);
-            mergedStepList.add(step);
-        }
+        mergedStepList.addAll(remainingStepList);
 
         return new TransactionStepGroup(mergedStepList);
     }
