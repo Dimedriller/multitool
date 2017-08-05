@@ -21,10 +21,6 @@ public class PresenterManager {
         mPresenterContainer = presenterContainer;
     }
 
-    public PushTransaction newPushTransaction(@Nullable String stackName) {
-        return new PushTransaction(this, stackName);
-    }
-
     @NonNull
     PresenterManagerInstanceState saveInstanceState() {
         HashMap<String, PresenterParcelableInstance> presenterInstanceMap = new HashMap<>();
@@ -72,6 +68,10 @@ public class PresenterManager {
         }
     }
 
+    public PushTransaction newPushTransaction(@Nullable String stackName) {
+        return new PushTransaction(this, mPresenterContainer, stackName);
+    }
+
     public PushTransaction newPushTransaction() {
         return newPushTransaction(null);
     }
@@ -84,14 +84,12 @@ public class PresenterManager {
         return newPopTransaction(null);
     }
 
-    void attachPresenter(@NonNull String tag, @NonNull PresenterBuilder presenterBuilder) {
-        Presenter presenter = mPresenterMap.get(tag);
-        if (presenter != null) {
+    void attachPresenter(@NonNull String tag, @NonNull Presenter presenter) {
+        if (mPresenterMap.get(tag) != null) {
             Log.w("Presenter \"" + tag + "\" already exists.");
             return;
         }
 
-        presenter = presenterBuilder.build(mPresenterContainer);
         mPresenterMap.put(tag, presenter);
         presenter.create();
     }
@@ -107,8 +105,14 @@ public class PresenterManager {
         mPresenterMap.remove(tag);
     }
 
-    void setViewPlacer(@NonNull String tag, @NonNull ViewPlacer placer) {
-        asdfg
+    void setViewPlacer(@NonNull String tag, @NonNull ViewPlacer viewPlacer) {
+        Presenter presenter = mPresenterMap.get(tag);
+        if (presenter == null) {
+            Log.w("Presenter \"" + tag + "\" does not exist.");
+            return;
+        }
+
+        presenter.setViewPlacer(viewPlacer);
     }
 
     void showPresenter(@NonNull String tag) {

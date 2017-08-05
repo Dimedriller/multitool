@@ -4,16 +4,16 @@ import android.support.annotation.NonNull;
 
 class TransactionAttachStep extends TransactionStep {
     private final @NonNull String mTag;
-    private final @NonNull PresenterBuilder mPresenterBuilder;
+    private final @NonNull Presenter mPresenter;
 
-    TransactionAttachStep(@NonNull String tag, @NonNull PresenterBuilder presenterBuilder) {
+    TransactionAttachStep(@NonNull String tag, @NonNull Presenter presenter) {
         mTag = tag;
-        mPresenterBuilder = presenterBuilder;
+        mPresenter = presenter;
     }
 
     @Override
     void actDirect(PresenterManager manager) {
-        manager.attachPresenter(mTag, mPresenterBuilder);
+        manager.attachPresenter(mTag, mPresenter);
     }
 
     @Override
