@@ -1,15 +1,34 @@
 package com.dimedriller.presenter;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-class TransactionStepGroup {
+class TransactionStepGroup implements Parcelable {
+    public static final Creator<TransactionStepGroup> CREATOR = new Creator<TransactionStepGroup>() {
+        @Override
+        public TransactionStepGroup createFromParcel(Parcel source) {
+            return new TransactionStepGroup(source);
+        }
+
+        @Override
+        public TransactionStepGroup[] newArray(int size) {
+            return new TransactionStepGroup[size];
+        }
+    };
+
     private final TransactionStep[] mSteps;
 
     TransactionStepGroup(List<TransactionStep> stepList) {
         mSteps = new TransactionStep[stepList.size()];
         stepList.toArray(mSteps);
+    }
+
+    TransactionStepGroup(Parcel source) {
+        mSteps = (TransactionStep[]) source.readArray(TransactionStep.class.getClassLoader());
     }
 
     void actDirect(PresenterManager manager) {
@@ -89,5 +108,15 @@ class TransactionStepGroup {
                 return true;
         }
         return false;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeParcelableArray(mSteps, flags);
     }
 }

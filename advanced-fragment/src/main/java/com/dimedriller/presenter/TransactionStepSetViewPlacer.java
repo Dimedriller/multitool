@@ -1,19 +1,37 @@
 package com.dimedriller.presenter;
 
+import android.os.Parcel;
 import android.support.annotation.NonNull;
 
 class TransactionStepSetViewPlacer extends TransactionStep {
-    private final @NonNull String mTag;
-    private final @NonNull ViewPlacer mPlacer;
+    public static final Creator<TransactionStepSetViewPlacer> CREATOR = new Creator<TransactionStepSetViewPlacer>() {
+        @Override
+        public TransactionStepSetViewPlacer createFromParcel(Parcel source) {
+            return new TransactionStepSetViewPlacer(source);
+        }
 
-    public TransactionStepSetViewPlacer(@NonNull String tag, @NonNull ViewPlacer placer) {
+        @Override
+        public TransactionStepSetViewPlacer[] newArray(int size) {
+            return new TransactionStepSetViewPlacer[size];
+        }
+    };
+
+    private final @NonNull String mTag;
+    private final @NonNull ViewPlacer mViewPlacer;
+
+    public TransactionStepSetViewPlacer(@NonNull String tag, @NonNull ViewPlacer viewPlacer) {
         mTag = tag;
-        mPlacer = placer;
+        mViewPlacer = viewPlacer;
+    }
+
+    TransactionStepSetViewPlacer(Parcel source) {
+        mTag = source.readString();
+        mViewPlacer = source.readParcelable(ViewPlacer.class.getClassLoader());
     }
 
     @Override
     void actDirect(PresenterManager manager) {
-        manager.setViewPlacer(mTag, mPlacer);
+        manager.setViewPlacer(mTag, mViewPlacer);
     }
 
     @Override
@@ -24,5 +42,16 @@ class TransactionStepSetViewPlacer extends TransactionStep {
     @Override
     boolean isOpposite(TransactionStep other) {
         return false;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(mTag);
+        dest.writeParcelable(mViewPlacer, flags);
     }
 }
