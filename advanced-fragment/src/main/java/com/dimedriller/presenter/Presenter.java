@@ -135,8 +135,8 @@ public abstract class Presenter<V extends ViewInterface, M> {
         // TODO: Add persisting logic
     }
 
-    final PresenterParcelableInstance saveParcelable() {
-        String className = getClass().getName();
+    final PresenterBuilder<? extends Presenter> toBuilder() {
+        Class<? extends Presenter> presenterClass = getClass();
 
         Bundle params = new Bundle(mParams);
         onSaveState(params);
@@ -144,6 +144,9 @@ public abstract class Presenter<V extends ViewInterface, M> {
 
         SparseArray<Parcelable> viewState = mViewInterface.getViewState();
 
-        return new PresenterParcelableInstance(className, params, viewState);
+
+        return new PresenterBuilder<>(presenterClass)
+                .setParams(params)
+                .setViewState(viewState);
     }
 }

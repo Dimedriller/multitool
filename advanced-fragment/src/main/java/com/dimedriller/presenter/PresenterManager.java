@@ -51,7 +51,7 @@ public class PresenterManager {
     }
 
     public PushTransaction newPushTransaction(@Nullable String stackName) {
-        return new PushTransaction(this, mPresenterContainer, stackName);
+        return new PushTransaction(this, stackName);
     }
 
     public PushTransaction newPushTransaction() {
@@ -66,14 +66,17 @@ public class PresenterManager {
         return newPopTransaction(null);
     }
 
-    void attachPresenter(@NonNull String tag, @NonNull Presenter presenter) {
-        if (mPresenterMap.get(tag) != null) {
+    Presenter attachPresenter(@NonNull String tag, @NonNull PresenterBuilder presenterBuilder) {
+        Presenter presenter = mPresenterMap.get(tag);
+        if (presenter != null) {
             Log.w("Presenter \"" + tag + "\" already exists.");
-            return;
+            return null;
         }
 
+        presenter = presenterBuilder.build(mPresenterContainer);
         mPresenterMap.put(tag, presenter);
         presenter.create();
+        return presenter;
     }
 
     void detachPresenter(@NonNull String tag) {
