@@ -57,11 +57,11 @@ class TransactionStepGroup implements Parcelable {
         return -1;
     }
 
-    TransactionStepGroup mergeForward(TransactionStepGroup otherGroup) {
-        List<TransactionStep> mergedStepList = Arrays.asList(mSteps);
+    private static TransactionStepGroup merge(TransactionStep[] first, TransactionStep[] last) {
+        List<TransactionStep> mergedStepList = Arrays.asList(first);
         List<TransactionStep> remainingStepList = new ArrayList<>();
 
-        for(TransactionStep step : otherGroup.mSteps) {
+        for(TransactionStep step : last) {
             int indexOppositeStep = findOppositeStepIndex(mergedStepList, step);
             if (indexOppositeStep == -1)
                 remainingStepList.add(step);
@@ -74,6 +74,10 @@ class TransactionStepGroup implements Parcelable {
         return new TransactionStepGroup(mergedStepList);
     }
 
+    TransactionStepGroup mergeForward(TransactionStepGroup otherGroup) {
+        return merge(mSteps, otherGroup.mSteps);
+    }
+
     /**
      * Merges steps with another {@code TransactionStepGroup} and returns new {@code TransactionStepGroup}.
      *
@@ -82,20 +86,7 @@ class TransactionStepGroup implements Parcelable {
      * Note: Order of steps is significantly important so {@code for} with index loop is used
      */
     TransactionStepGroup mergeBack(TransactionStepGroup otherGroup) {
-        List<TransactionStep> mergedStepList = Arrays.asList(otherGroup.mSteps);
-        List<TransactionStep> remainingStepList = new ArrayList<>();
-
-        for (TransactionStep step : mSteps) {
-            int indexOppositeStep = findOppositeStepIndex(mergedStepList, step);
-            if (indexOppositeStep == -1)
-                remainingStepList.add(step);
-            else
-                mergedStepList.remove(indexOppositeStep);
-        }
-
-        mergedStepList.addAll(remainingStepList);
-
-        return new TransactionStepGroup(mergedStepList);
+        return merge(otherGroup.mSteps, mSteps);
     }
 
     boolean containsAttachStep(String tag) {

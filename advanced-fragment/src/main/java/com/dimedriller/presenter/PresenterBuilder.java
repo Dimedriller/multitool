@@ -49,8 +49,48 @@ public class PresenterBuilder<P extends Presenter> implements Parcelable {
         mViewState = ParcelUtil.readSparseArray(source, Parcelable.class);
     }
 
-    public @NonNull String getTag() {
+    protected @NonNull String getTag() {
         return mPresenterClass.getName();
+    }
+
+    protected PresenterBuilder<P> setParam(String name, int value) {
+        mParams.putInt(name, value);
+        return this;
+    }
+
+    protected PresenterBuilder<P> setParam(String name, int[] value) {
+        mParams.putIntArray(name, value);
+        return this;
+    }
+
+    protected PresenterBuilder<P> setParam(String name, long value) {
+        mParams.putLong(name, value);
+        return this;
+    }
+
+    protected PresenterBuilder<P> setParam(String name, long[] value) {
+        mParams.putLongArray(name, value);
+        return this;
+    }
+
+    protected PresenterBuilder<P> setParam(String name, String value) {
+        mParams.putString(name, value);
+        return this;
+    }
+
+    protected PresenterBuilder<P> setParam(String name, String[] value) {
+        mParams.putStringArray(name, value);
+        return this;
+    }
+
+    protected PresenterBuilder<P> setParam(String name, Parcelable value) {
+        mParams.putParcelable(name, value);
+        return this;
+    }
+
+    protected PresenterBuilder<P> setParam(String name, Parcelable[] value) {
+        mParams.putParcelableArray(name, value);
+        return this;
     }
 
     PresenterBuilder<P> setParams(@NonNull Bundle params) {
