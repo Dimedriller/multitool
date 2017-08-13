@@ -10,14 +10,11 @@ import android.view.ViewGroup;
 import com.dimedriller.advancedmodel.Model;
 
 public abstract class Presenter<V extends ViewInterface, M> {
-    static final String PARAM_TAG = Presenter.class.getName() + ".TAG";
-
     protected final V mViewInterface;
     protected final M mModel;
 
     private final @NonNull PresenterContainer mContainer;
     private final @NonNull Bundle mParams;
-    private final @NonNull String mTag;
 
     private @NonNull PresenterState mState = PresenterState.INIT;
 
@@ -35,19 +32,10 @@ public abstract class Presenter<V extends ViewInterface, M> {
 
         mContainer = container;
         mParams = params;
-
-        String tag = params.getString(PARAM_TAG);
-        if (tag == null)
-            throw new IllegalArgumentException("Presenter tag cannot be null.");
-        mTag = tag;
     }
 
     final void setViewPlacer(@NonNull ViewPlacer viewPlacer) {
         mViewPlacer = viewPlacer;
-    }
-
-    final @NonNull String getTag() {
-        return mTag;
     }
 
     @CallSuper
@@ -140,7 +128,6 @@ public abstract class Presenter<V extends ViewInterface, M> {
 
         Bundle params = new Bundle(mParams);
         onSaveState(params);
-        params.putString(PARAM_TAG, mTag);
 
         SparseArray<Parcelable> viewState = mViewInterface.getViewState();
 

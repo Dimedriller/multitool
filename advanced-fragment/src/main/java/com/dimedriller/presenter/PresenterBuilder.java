@@ -104,9 +104,7 @@ public class PresenterBuilder<P extends Presenter> implements Parcelable {
     }
 
     final P build(PresenterContainer container) {
-        String tag = getTag();
         Bundle params = new Bundle(mParams);
-        params.putString(Presenter.PARAM_TAG, tag);
 
         try {
             Constructor<P> constructor = mPresenterClass.getConstructor(PresenterContainer.class, Bundle.class);
