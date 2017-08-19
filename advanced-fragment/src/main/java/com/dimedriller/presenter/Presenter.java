@@ -8,6 +8,7 @@ import android.util.SparseArray;
 import android.view.ViewGroup;
 
 import com.dimedriller.advancedmodel.Model;
+import com.dimedriller.log.Log;
 
 public abstract class Presenter<V extends ViewInterface, M> {
     protected final V mViewInterface;
@@ -63,6 +64,11 @@ public abstract class Presenter<V extends ViewInterface, M> {
     }
 
     final void createView(@NonNull ViewPlacer viewPlacer) {
+        if (mViewInterface.hasView()) {
+            Log.w("Presenter \"" + this + "\" was already shown");
+            return;
+        }
+
         mViewPlacer = viewPlacer;
 
         ViewGroup containerView = mContainer.getContainerView();
@@ -81,6 +87,11 @@ public abstract class Presenter<V extends ViewInterface, M> {
     }
 
     final void destroyView(boolean isViewStateSaved) {
+        if (!mViewInterface.hasView()) {
+            Log.w("Presenter \"" + this + "\" was already hidden");
+            return;
+        }
+
         if (isViewStateSaved)
             mViewInterface.saveViewState();
 
@@ -90,20 +101,17 @@ public abstract class Presenter<V extends ViewInterface, M> {
         onViewDestroyed();
     }
 
-    boolean hasView() {
-        return mViewInterface.hasView();
-    }
-
-    @NonNull PresenterState getState() {
-        return mState;
-    }
-
     @CallSuper
     protected void onResume() {
         // No action
     }
 
     void resume() {
+        if (mState == PresenterState.RESUMED) {
+            Log.w("Presenter \"" + this + "\" was already resumed.");
+            return;
+        }
+
         mState = PresenterState.RESUMED;
         onResume();
     }
@@ -114,13 +122,18 @@ public abstract class Presenter<V extends ViewInterface, M> {
     }
 
     void pause() {
+        if (mState == PresenterState.PAUSED) {
+            Log.w("Presenter \"" + this + "\" was already paused.");
+            return;
+        }
+
         mState = PresenterState.PAUSED;
         onPause();
     }
 
     @CallSuper
     public void onSaveState(@NonNull Bundle state) {
-        // TODO: Add persisting logic
+        // No action
     }
 
     final PresenterBuilder<? extends Presenter> toBuilder() {

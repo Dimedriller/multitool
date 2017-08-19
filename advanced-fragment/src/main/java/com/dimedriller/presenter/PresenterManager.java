@@ -107,11 +107,6 @@ public class PresenterManager {
             return;
         }
 
-        if (presenter.hasView()) {
-            Log.w("Presenter \"" + tag + "\" was already shown");
-            return;
-        }
-
         presenter.createView();
     }
 
@@ -119,11 +114,6 @@ public class PresenterManager {
         Presenter presenter = mPresenterMap.get(tag);
         if (presenter == null) {
             Log.w("Presenter \"" + tag + "\" does not exist.");
-            return;
-        }
-
-        if (!presenter.hasView()) {
-            Log.w("Presenter \"" + tag + "\" was already hidden");
             return;
         }
 
@@ -137,11 +127,6 @@ public class PresenterManager {
             return;
         }
 
-        if (presenter.getState() == PresenterState.RESUMED) {
-            Log.w("Presenter \"" + tag + "\" was already resumed.");
-            return;
-        }
-
         presenter.resume();
     }
 
@@ -149,11 +134,6 @@ public class PresenterManager {
         Presenter presenter = mPresenterMap.get(tag);
         if (presenter == null) {
             Log.w("Presenter \"" + tag + "\" does not exist.");
-            return;
-        }
-
-        if (presenter.getState() == PresenterState.PAUSED) {
-            Log.w("Presenter \"" + tag + "\" was already paused.");
             return;
         }
 
