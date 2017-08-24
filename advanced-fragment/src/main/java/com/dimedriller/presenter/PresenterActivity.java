@@ -36,6 +36,8 @@ public abstract class PresenterActivity<VI extends ContainerViewInterface>
 
     @Override
     protected void onDestroy() {
+        mPresenterManager.destroy();
+
         ViewGroup rootView = (ViewGroup) findViewById(android.R.id.content);
         mViewInterface.destroyView(rootView, mViewPlacer);
 
@@ -48,6 +50,20 @@ public abstract class PresenterActivity<VI extends ContainerViewInterface>
 
         PresenterManagerInstanceState managerInstanceState = mPresenterManager.saveInstanceState();
         outState.putParcelable(PARAM_PRESENTER_MANAGER_INSTANCE_STATE, managerInstanceState);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        mPresenterManager.resume();
+    }
+
+    @Override
+    protected void onPause() {
+        mPresenterManager.pause();
+
+        super.onPause();
     }
 
     @Override

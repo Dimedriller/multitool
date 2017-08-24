@@ -33,6 +33,27 @@ public class CompositePresenter<V extends ContainerViewInterface, M> extends Pre
         state.putParcelable(PARAM_PRESENTER_MANAGER_INSTANCE_STATE, managerInstanceState);
     }
 
+    @Override
+    protected void onDestroy() {
+        mPresenterManager.destroy();
+
+        super.onDestroy();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        mPresenterManager.resume();
+    }
+
+    @Override
+    protected void onPause() {
+        mPresenterManager.pause();
+
+        super.onPause();
+    }
+
     @NonNull
     @Override
     public PresenterActivity getActivity() {

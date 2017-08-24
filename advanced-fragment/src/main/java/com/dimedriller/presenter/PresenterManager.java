@@ -202,4 +202,16 @@ public class PresenterManager {
 
         mergedPopGroup.actReverse(this);
     }
+
+    void resume() {
+        // TODO
+    }
+
+    void pause() {
+        // TODO
+    }
+
+    void destroy() {
+        // TODO
+    }
 }

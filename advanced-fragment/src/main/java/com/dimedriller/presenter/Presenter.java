@@ -106,7 +106,7 @@ public abstract class Presenter<V extends ViewInterface, M> {
         // No action
     }
 
-    void resume() {
+    final void resume() {
         if (mState == PresenterState.RESUMED) {
             Log.w("Presenter \"" + this + "\" was already resumed.");
             return;
@@ -121,7 +121,7 @@ public abstract class Presenter<V extends ViewInterface, M> {
         // No action
     }
 
-    void pause() {
+    final void pause() {
         if (mState == PresenterState.PAUSED) {
             Log.w("Presenter \"" + this + "\" was already paused.");
             return;
