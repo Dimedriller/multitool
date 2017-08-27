@@ -49,6 +49,5 @@ public class PushTransaction {
 
         TransactionStepGroup transaction = new TransactionStepGroup(mStepList);
         mManager.pushTransaction(mStackName, transaction);
-        transaction.actDirect(mManager);
     }
 }

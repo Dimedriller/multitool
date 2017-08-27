@@ -148,6 +148,8 @@ public class PresenterManager {
         }
 
         transactionStack.add(0, transaction);
+
+        transaction.actDirect(this);
     }
 
     void popTransaction(@Nullable String stackName, int transactionCount) {
