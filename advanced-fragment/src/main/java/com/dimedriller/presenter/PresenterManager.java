@@ -17,6 +17,8 @@ public class PresenterManager {
     private final Map<String, Presenter> mPresenterMap = new HashMap<>();
     private final Map<String, List<TransactionStepGroup>> mTransactionStackMap = new HashMap<>();
 
+    private final List<PendingAction> mPendingActionList = new ArrayList<>();
+
     public PresenterManager(@NonNull PresenterContainer presenterContainer) {
         mPresenterContainer = presenterContainer;
     }
@@ -206,14 +208,32 @@ public class PresenterManager {
     }
 
     void resume() {
-        // TODO
+        for(PendingAction action : mPendingActionList)
+            action.act(this);
+        mPendingActionList.clear();
     }
 
     void pause() {
-        // TODO
+        List<String> activePresenterList = new ArrayList<>();
+        Set<Map.Entry<String, Presenter>> entries = mPresenterMap.entrySet();
+        for(Map.Entry<String, Presenter> entry : entries) {
+            Presenter presenter = entry.getValue();
+            if (presenter.getState() != PresenterState.RESUMED)
+                continue;
+
+            String tag = entry.getKey();
+            activePresenterList.add(tag);
+            presenter.pause();
+        }
+        ContainerResumeAction resumeAction = new ContainerResumeAction(activePresenterList);
+        mPendingActionList.add(0, resumeAction);
     }
 
     void destroy() {
-        // TODO
+        Set<Map.Entry<String, Presenter>> entries = mPresenterMap.entrySet();
+        for(Map.Entry<String, Presenter> entry : entries) {
+            Presenter presenter = entry.getValue();
+            presenter.destroy();
+        }
     }
 }

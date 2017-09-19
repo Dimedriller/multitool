@@ -39,6 +39,13 @@ public abstract class Presenter<V extends ViewInterface, M> {
         mViewPlacer = viewPlacer;
     }
 
+    @NonNull
+    public final PresenterState getState() {
+        return mState;
+    }
+
+    final
+
     @CallSuper
     protected void onCreate() {
         // No action
