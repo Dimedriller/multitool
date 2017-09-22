@@ -2,17 +2,12 @@ package com.dimedriller.presenter;
 
 import java.util.List;
 
-class ContainerResumeAction implements PendingAction {
+class PendingResumeAction implements PendingAction {
     private final String[] mTags;
 
-    public ContainerResumeAction(List<String> tagList) {
+    PendingResumeAction(List<String> tagList) {
         mTags = new String[tagList.size()];
         tagList.toArray(mTags);
-    }
-
-    @Override
-    public boolean isPersistable() {
-        return false;
     }
 
     @Override

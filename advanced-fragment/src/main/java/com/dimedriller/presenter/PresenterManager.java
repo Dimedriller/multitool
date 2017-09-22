@@ -17,6 +17,7 @@ public class PresenterManager {
     private final Map<String, Presenter> mPresenterMap = new HashMap<>();
     private final Map<String, List<TransactionStepGroup>> mTransactionStackMap = new HashMap<>();
 
+    private @NonNull PresenterState mState = PresenterState.CREATED;
     private final List<PendingAction> mPendingActionList = new ArrayList<>();
 
     public PresenterManager(@NonNull PresenterContainer presenterContainer) {
@@ -143,6 +144,11 @@ public class PresenterManager {
     }
 
     void pushTransaction(String stackName, TransactionStepGroup transaction) {
+        if (mState != PresenterState.RESUMED) {
+            mPendingActionList.add(new PendingPushTransactionAction(stackName, transaction));
+            return;
+        }
+
         List<TransactionStepGroup> transactionStack = mTransactionStackMap.get(stackName);
         if (transactionStack == null) {
             transactionStack = new ArrayList<>();
@@ -155,6 +161,11 @@ public class PresenterManager {
     }
 
     void popTransaction(@Nullable String stackName, int transactionCount) {
+        if (mState != PresenterState.RESUMED) {
+            mPendingActionList.add(new PendingPopByCountTransactionAction(stackName, transactionCount));
+            return;
+        }
+
         List<TransactionStepGroup> transactionStack = mTransactionStackMap.get(stackName);
         if (transactionStack == null) {
             Log.w("Pop with null \"" + stackName + "\" stack was ignored.");
@@ -181,6 +192,11 @@ public class PresenterManager {
     }
 
     void popTransaction(@Nullable String stackName, String toTagName) {
+        if (mState != PresenterState.RESUMED) {
+            mPendingActionList.add(new PendingPopByNameTransactionAction(stackName, toTagName));
+            return;
+        }
+
         List<TransactionStepGroup> transactionStack = mTransactionStackMap.get(stackName);
         if (transactionStack == null) {
             Log.w("Pop with null \"" + stackName + "\" stack was ignored.");
@@ -208,12 +224,16 @@ public class PresenterManager {
     }
 
     void resume() {
+        mState = PresenterState.RESUMED;
+
         for(PendingAction action : mPendingActionList)
             action.act(this);
         mPendingActionList.clear();
     }
 
     void pause() {
+        mState = PresenterState.PAUSED;
+
         List<String> activePresenterList = new ArrayList<>();
         Set<Map.Entry<String, Presenter>> entries = mPresenterMap.entrySet();
         for(Map.Entry<String, Presenter> entry : entries) {
@@ -225,11 +245,13 @@ public class PresenterManager {
             activePresenterList.add(tag);
             presenter.pause();
         }
-        ContainerResumeAction resumeAction = new ContainerResumeAction(activePresenterList);
+        PendingResumeAction resumeAction = new PendingResumeAction(activePresenterList);
         mPendingActionList.add(0, resumeAction);
     }
 
     void destroy() {
+        mState = PresenterState.DESTROYED;
+
         Set<Map.Entry<String, Presenter>> entries = mPresenterMap.entrySet();
         for(Map.Entry<String, Presenter> entry : entries) {
             Presenter presenter = entry.getValue();
